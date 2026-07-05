@@ -5,8 +5,9 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import errorHandler from './middleware/errorHandler';
-import connectDB from './config/db';
+import errorHandler from './middleware/errorHandler.js';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
 
 // ES6 module __dirname alternative
 const __filename = fileURLToPath(import.meta.url);

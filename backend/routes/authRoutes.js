@@ -47,5 +47,6 @@ router.post('/login', loginValidation, login);
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
 router.post('/change-password', protect, changePassword);
+const authRoutes = router
 
-export default router;
+export default authRoutes;
