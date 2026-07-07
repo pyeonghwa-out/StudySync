@@ -1,84 +1,47 @@
-import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS } from "../utils/apiPaths";
+import axios from "axios";
+import { BASE_URL } from "./apiPaths";
 
-const login = async (email, password) => {
-  try {
-    const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
-      email,
-      password,
-    });
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  timeout: 80000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
 
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || {
-      message: "An unknown error occurred",
-    };
+// Request Interceptor
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem("token");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
 
-const register = async (username, email, password) => {
-  try {
-    const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
-      username,
-      email,
-      password,
-    });
+// Response Interceptor
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      if (error.response.status === 500) {
+        console.error("Server error. Please try again later.");
+      }
+    } else if (error.code === "ECONNABORTED") {
+      console.error("Request timeout. Please try again.");
+    }
 
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || {
-      message: "An unknown error occurred",
-    };
+    return Promise.reject(error);
   }
-};
+);
 
-const getProfile = async () => {
-  try {
-    const response = await axiosInstance.get(API_PATHS.AUTH.GET_PROFILE);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || {
-      message: "An unknown error occurred",
-    };
-  }
-};
-
-const updateProfile = async (userData) => {
-  try {
-    const response = await axiosInstance.put(
-      API_PATHS.AUTH.UPDATE_PROFILE,
-      userData
-    );
-
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || {
-      message: "An unknown error occurred",
-    };
-  }
-};
-
-const changePassword = async (passwords) => {
-  try {
-    const response = await axiosInstance.post(
-      API_PATHS.AUTH.CHANGE_PASSWORD,
-      passwords
-    );
-
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || {
-      message: "An unknown error occurred",
-    };
-  }
-};
-
-const authService = {
-  login,
-  register,
-  getProfile,
-  updateProfile,
-  changePassword,
-};
-
-export default authService;
+export default axiosInstance;
