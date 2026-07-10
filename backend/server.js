@@ -12,6 +12,7 @@ import documentRoutes from './routes/documentRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
 import progressRoutes from './routes/progressRoutes.js';
+import quizRoutes from './routes/quizRoutes.js';
 
 // ES6 module __dirname alternative
 const __filename = fileURLToPath(import.meta.url);

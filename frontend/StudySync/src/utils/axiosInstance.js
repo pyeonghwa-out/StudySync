@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request Interceptor
+// Request Interceptor :  Thi saves from writing in each request with headers
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("token");

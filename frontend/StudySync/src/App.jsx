@@ -13,10 +13,11 @@ import ProfilePage from './pages/Profile/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import QuizTakePage from './pages/Quizzes/QuizTakePage';
+import { useAuth } from './context/AuthContext';
 
 const App = () => {
-  const isAuthenticated = false;
-  const loading = false;
+   const { isAuthenticated, loading } = useAuth(); 
+  
   if(loading) {
     return <h1>Loading...</h1>
   }

@@ -1,58 +1,84 @@
-export const BASE_URL = "http://localhost:8000";
+import axiosInstance from "../utils/axiosInstance";
+import { API_PATHS } from "../utils/apiPaths";
 
-export const API_PATHS = {
-  AUTH: {
-    REGISTER: "/api/auth/register",
-    LOGIN: "/api/auth/login",
-    GET_PROFILE: "/api/auth/profile",
-    UPDATE_PROFILE: "/api/auth/profile",
-    CHANGE_PASSWORD: "/api/auth/change-password",
-  },
+const login = async (email, password) => {
+  try {
+    const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+      email,
+      password,
+    });
 
-  DOCUMENTS: {
-    UPLOAD: "/api/documents/upload",
-    GET_DOCUMENTS: "/api/documents",
-    GET_DOCUMENT_BY_ID: (id) => `/api/documents/${id}`,
-    UPDATE_DOCUMENT: (id) => `/api/documents/${id}`,
-    DELETE_DOCUMENT: (id) => `/api/documents/${id}`,
-  },
-
-  AI: {
-    GENERATE_FLASHCARDS: "/api/ai/generate-flashcards",
-    GENERATE_QUIZ: "/api/ai/generate-quiz",
-    GENERATE_SUMMARY: "/api/ai/generate-summary",
-    CHAT: "/api/ai/chat",
-    EXPLAIN_CONCEPT: "/api/ai/explain-concept",
-    GET_CHAT_HISTORY: (documentId) =>
-      `/api/ai/chat-history/${documentId}`,
-  },
-
-  FLASHCARDS: {
-    GET_ALL_FLASHCARD_SETS: "/api/flashcards",
-    GET_FLASHCARDS_FOR_DOC: (documentId) =>
-      `/api/flashcards/${documentId}`,
-    REVIEW_FLASHCARD: (cardId) =>
-      `/api/flashcards/${cardId}/review`,
-    TOGGLE_STAR: (cardId) =>
-      `/api/flashcards/${cardId}/star`,
-    DELETE_FLASHCARD_SET: (id) =>
-      `/api/flashcards/${id}`,
-  },
-
-  QUIZZES: {
-    GET_QUIZZES_FOR_DOC: (documentId) =>
-      `/api/quizzes/${documentId}`,
-    GET_QUIZ_BY_ID: (id) =>
-      `/api/quizzes/quiz/${id}`,
-    SUBMIT_QUIZ: (id) =>
-      `/api/quizzes/${id}/submit`,
-    GET_QUIZ_RESULTS: (id) =>
-      `/api/quizzes/${id}/results`,
-    DELETE_QUIZ: (id) =>
-      `/api/quizzes/${id}`,
-  },
-
-  PROGRESS: {
-    GET_DASHBOARD: "/api/progress/dashboard",
-  },
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "An unknown error occurred",
+    };
+  }
 };
+
+const register = async (username, email, password) => {
+  try {
+    const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+      username,
+      email,
+      password,
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "An unknown error occurred",
+    };
+  }
+};
+
+const getProfile = async () => {
+  try {
+    const response = await axiosInstance.get(API_PATHS.AUTH.GET_PROFILE);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "An unknown error occurred",
+    };
+  }
+};
+
+const updateProfile = async (userData) => {
+  try {
+    const response = await axiosInstance.put(
+      API_PATHS.AUTH.UPDATE_PROFILE,
+      userData
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "An unknown error occurred",
+    };
+  }
+};
+
+const changePassword = async (passwords) => {
+  try {
+    const response = await axiosInstance.post(
+      API_PATHS.AUTH.CHANGE_PASSWORD,
+      passwords
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "An unknown error occurred",
+    };
+  }
+};
+
+const authService = {
+  login,
+  register,
+  getProfile,
+  updateProfile,
+  changePassword,
+};
+
+export default authService;
