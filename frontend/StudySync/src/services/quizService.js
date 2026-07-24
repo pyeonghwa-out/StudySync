@@ -2,13 +2,21 @@ import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
 
 const getQuizzesForDocument = async (documentId) => {
+  console.log("SERVICE CALLED");
+  console.log("documentId:", documentId);
+
+  const url = API_PATHS.QUIZZES.GET_QUIZZES_FOR_DOC(documentId);
+  console.log("URL:", url);
+
   try {
-    const response = await axiosInstance.get(
-      API_PATHS.QUIZZES.GET_QUIZZES_FOR_DOC(documentId)
-    );
+    const response = await axiosInstance.get(url);
+
+    console.log("Axios response:", response);
 
     return response.data;
   } catch (error) {
+    console.log("Axios error:", error);
+
     throw error.response?.data || {
       message: "Failed to fetch quizzes",
     };

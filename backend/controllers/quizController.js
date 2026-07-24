@@ -4,6 +4,9 @@ import Quiz from '../models/Quiz.js';
 // @route   GET /api/quizzes/:documentId
 // @access  Private
 export const getQuizzes = async (req, res, next) => {
+  console.log("===== GET QUIZZES =====");
+  console.log("documentId:", req.params.documentId);
+  console.log("user:", req.user?._id);
   try {
     const quizzes = await Quiz.find({
       userId: req.user._id,

@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 const ProtectedRoute = () => {
     const { isAuthenticated, loading } = useAuth(); 
 
-    if (isLoading) {
+    if (loading) {
         return <div>Loading...</div>; 
     }
 
