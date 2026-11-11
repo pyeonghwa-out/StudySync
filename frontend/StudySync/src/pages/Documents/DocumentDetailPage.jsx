@@ -10,6 +10,7 @@ import ChatInterface from "../../components/chat/ChatInterface";
 import AIActions from "../../components/ai/AIActions";
 import FlashcardManager from "../../components/flashcards/FlashcardManager";
 import QuizManager from "../../components/quizzes/QuizManager";
+import { BASE_URL } from "../../utils/apiPaths";
 
 const DocumentDetailPage = () => {
   const { id } = useParams();
@@ -38,15 +39,28 @@ const DocumentDetailPage = () => {
   const getPdfUrl = () => {
     if (!document?.data?.filePath) return null;
 
-    const filePath = document.data.filePath;
+    let filePath = document.data.filePath;
 
+    // If filePath has an old hardcoded localhost / 127.0.0.1 saved in the database, extract the relative path
+    if (filePath.includes("localhost:") || filePath.includes("127.0.0.1:")) {
+      try {
+        const parsed = new URL(filePath);
+        filePath = parsed.pathname;
+      } catch (e) {
+        filePath = filePath.replace(/^https?:\/\/[^/]+/, "");
+      }
+    }
+
+    // If it's a real external cloud URL (e.g. S3 / Cloudinary), use directly
     if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
       return filePath;
     }
 
-    const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
+    // Clean base URL (strip trailing slashes and trailing /api)
+    const cleanBase = BASE_URL.replace(/\/+$/, "").replace(/\/api$/, "");
+    const cleanPath = filePath.startsWith("/") ? filePath : `/${filePath}`;
 
-    return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
+    return `${cleanBase}${cleanPath}`;
   };
 
   const renderContent = () => {
