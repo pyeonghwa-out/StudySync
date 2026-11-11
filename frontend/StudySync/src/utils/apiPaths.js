@@ -1,14 +1,18 @@
+// Support Vite environment variables (e.g. VITE_API_URL or VITE_BACKEND_URL)
+// Automatically strips trailing slash and trailing '/api' to avoid double /api/api routes
+const envUrl =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  import.meta.env.VITE_API_BASE_URL;
 
-// Keep every backend API endpoint in one place.
-
-export const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+export const BASE_URL = envUrl
+  ? envUrl.replace(/\/+$/, "").replace(/\/api$/, "")
+  : "http://localhost:8000";
 
 export const API_PATHS = {
   AUTH: {
     REGISTER: "/api/auth/register",
-    LOGIN: "/api/auth/login",
-    GET_PROFILE: "/api/auth/profile",
+    LOGIN: "/api/auth/login",    GET_PROFILE: "/api/auth/profile",
     UPDATE_PROFILE: "/api/auth/profile",
     CHANGE_PASSWORD: "/api/auth/change-password",
   },
