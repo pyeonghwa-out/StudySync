@@ -20,18 +20,28 @@ const __dirname = path.dirname(__filename);
 
 // Initialize express app
 const app = express();
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "StudySync backend is running",
+  });
+});
 
 // Connect to MongoDB
 connectDB();
 
 
 // Middleware to handle CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://studysync-frontend-y1ur.onrender.com",
+];
+
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
   })
 );
 
