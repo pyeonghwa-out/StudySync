@@ -19,84 +19,87 @@
 
 ## ✨ Overview
 
-StudySync is an AI-powered study assistance and learning platform that turns PDF materials into interactive learning resources. Upload and read PDFs, ask document-based questions, generate summaries and concept explanations, create flashcards and quizzes with Google Gemini, and monitor your learning progress.
+StudySync is an AI-powered study assistance and learning platform that turns PDF materials into interactive learning resources. Upload and read PDFs, ask document-based questions, generate summaries and concept explanations, create flashcards and quizzes with Google Gemini, and monitor your learning progress in real time.
+
+---
 
 ## 🚀 Features
 
 | Feature | What you can do |
 |---|---|
 | 🔐 **Authentication** | Register, log in, update your profile, and change your password using JWT and bcrypt. |
-| 📚 **PDF library & viewer** | Upload PDFs, extract their text, and read documents alongside study tools. |
-| 💬 **AI chat** | Ask questions using document context, with chat history saved per document. |
-| 🧠 **Summaries & explanations** | Generate concise document summaries and explanations of difficult concepts. |
-| 🃏 **Flashcards** | Generate Easy, Medium, and Hard decks. Flip cards, track reviews, and star cards for later. |
-| ✅ **Quizzes** | Generate multiple-choice quizzes with four options, submit answers, view scores, and review explanations. |
-| 📊 **Analytics** | Track documents, flashcards reviewed, starred cards, completed quizzes, average quiz score, and recent activity. |
+| 📚 **PDF Library & Viewer** | Upload PDFs, extract their text, and read documents side-by-side with interactive study tools. |
+| 💬 **AI Document Chat** | Ask questions using document context retrieval, with persistent chat history saved per document. |
+| 🧠 **Summaries & Explanations** | Generate concise document summaries and detailed explanations of difficult concepts on demand. |
+| 🃏 **Smart Flashcards** | Generate Easy, Medium, and Hard card decks. Flip cards in 3D, track reviews, and star cards for targeted revision. |
+| ✅ **Interactive Quizzes** | Generate 4-option multiple-choice quizzes, submit answers, get auto-graded, and review answer explanations. |
+| 📊 **Progress Analytics** | Track total documents, reviewed flashcards, starred cards, completed quizzes, average quiz score, and recent activity. |
+
+---
 
 ## 🧰 Tech Stack
 
-| Frontend | Backend |
+| Layer | Technologies |
 |---|---|
-| React 19 + Vite 8 | Node.js + Express 5 (ES modules) |
-| Tailwind CSS v4 | MongoDB + Mongoose 9 |
-| React Router v7 | Google Gen AI SDK `@google/genai` v2.10.0 |
-| Context API + LocalStorage | Gemini `gemini-2.5-flash-lite` |
-| Axios, Lucide React | JWT, bcryptjs, Multer, pdf-parse |
-| React Markdown, Remark GFM, Syntax Highlighter, React Hot Toast | express-validator |
+| **Frontend** | React 19, Vite 8, Tailwind CSS v4, React Router v7, Context API, Axios, Lucide React, React Markdown |
+| **Backend** | Node.js (ES Modules), Express 5, MongoDB, Mongoose 9, Multer, pdf-parse, bcryptjs, jsonwebtoken |
+| **AI Engine** | Google Gen AI SDK (`@google/genai`) powered by **`gemini-2.5-flash-lite`** |
+
+---
 
 ## ⚙️ How It Works
 
-1. **Upload:** Multer handles the PDF upload and `pdf-parse` extracts its text.
-2. **Chunk:** Extracted text is divided into chunks of approximately **500 words**, with a **50-word overlap**.
-3. **Retrieve:** Keyword-based retrieval finds relevant chunks when a user asks a question.
-4. **Generate:** Relevant context is sent to Gemini to generate answers, summaries, explanations, flashcards, or quizzes.
-5. **Store:** Documents and learning activity are stored in MongoDB.
+1. **Upload:** Multer handles PDF uploads to `backend/uploads/documents` and `pdf-parse` extracts text.
+2. **Chunk:** Extracted text is divided into chunks of ~500 words with a 50-word overlap to preserve context.
+3. **Retrieve:** Keyword-based relevance scoring retrieves the most relevant chunks for user queries.
+4. **Generate:** Chunks and prompt instructions are sent to Google Gemini (`gemini-2.5-flash-lite`) to generate answers, summaries, flashcards, or quizzes.
+5. **Persist:** All user data, documents, chunks, flashcards, quizzes, and chat histories are stored in MongoDB.
 
-> [!NOTE]
-> StudySync uses keyword-based retrieval, not vector embeddings. AI-generated content should be checked against the original document.
+---
 
 ## 📁 Project Structure
 
-The following is a suggested structure; adapt it to the actual repository if names differ.
-
 ```text
 StudySync/
-├── client/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/         # AuthContext
-│   │   ├── pages/
-│   │   ├── services/        # Axios API client
-│   │   ├── hooks/
-│   │   ├── utils/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── .env.example
-│   └── package.json
-├── server/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── services/        # AI, PDF, and retrieval logic
-│   │   ├── validators/
-│   │   └── server.js
-│   ├── uploads/             # Local PDF storage
-│   ├── .env.example
-│   └── package.json
-├── .gitignore
+├── backend/
+│   ├── config/              # Database and Multer configuration
+│   ├── controllers/         # Request handlers (AI, Auth, Documents, Flashcards, Quizzes, Progress)
+│   ├── middleware/          # JWT auth and error handling
+│   ├── models/              # Mongoose schemas (User, Document, Flashcard, Quiz, ChatHistory)
+│   ├── routes/              # Express API route declarations
+│   ├── uploads/             # Server storage for uploaded PDFs
+│   ├── utils/               # Gemini AI service, PDF parser, and text chunker
+│   ├── .env                 # Environment variables
+│   ├── package.json
+│   └── server.js            # Express server entry point
+│
+├── frontend/
+│   └── StudySync/           # React + Vite application
+│       ├── src/
+│       │   ├── components/  # Modular UI components (AI, Chat, Flashcards, Quizzes, etc.)
+│       │   ├── context/     # AuthContext
+│       │   ├── pages/       # Application views (Dashboard, Documents, Quizzes, Flashcards, Profile)
+│       │   ├── services/    # Axios API callers
+│       │   ├── utils/       # API paths and Axios instance
+│       │   ├── App.jsx      # Routes and route protection
+│       │   └── main.jsx
+│       ├── package.json
+│       └── vite.config.js
+│
 └── README.md
 ```
+
+---
 
 ## 🛠️ Getting Started
 
 ### Prerequisites
 
-- Node.js and npm
-- MongoDB (local or hosted)
-- Google Gemini API key
+- **Node.js** (v18+) & **npm**
+- **MongoDB** running locally (`mongodb://127.0.0.1:27017`) or MongoDB Atlas
+- **Google Gemini API Key** (from [Google AI Studio](https://aistudio.google.com/))
+
+---
 
 ### 1. Clone the repository
 
@@ -105,91 +108,80 @@ git clone https://github.com/<your-username>/StudySync.git
 cd StudySync
 ```
 
+---
+
 ### 2. Install dependencies
 
 ```bash
-cd server && npm install
-cd ../client && npm install
+# Backend
+cd backend
+npm install
+
+# Frontend
+cd ../frontend/StudySync
+npm install
 ```
+
+---
 
 ### 3. Configure environment variables
 
-Create `.env` files in both `server/` and `client/`.
+Create a `.env` file in the `backend/` directory:
 
-**`server/.env`**
+**`backend/.env`**
 
 ```env
-PORT=5000
+PORT=8000
 MONGODB_URI=mongodb://127.0.0.1:27017/studysync
-JWT_SECRET=replace_with_a_strong_secret
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.5-flash-lite
-UPLOAD_DIR=uploads
-MAX_FILE_SIZE_MB=10
-CLIENT_URL=http://localhost:5173
+JWT_SECRET=your_jwt_secret_key_here
+JWT_EXPIRE=7d
+NODE_ENV=development
+MAX_FILE_SIZE=10485760
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-**`client/.env`**
+---
 
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-```
+### 4. Run the application
 
-> [!IMPORTANT]
-> These variable names are examples. Match them to the names used in your configuration files. Never expose `JWT_SECRET`, `GEMINI_API_KEY`, or database credentials in frontend environment variables.
-
-### 4. Run locally
-
-Start the backend and frontend in separate terminals. Use the scripts defined in each `package.json` if they differ from these examples.
+Start the backend and frontend in separate terminals:
 
 ```bash
-# Terminal 1 — Backend
-cd server
+# Terminal 1 — Backend (http://localhost:8000)
+cd backend
 npm run dev
 ```
 
 ```bash
-# Terminal 2 — Frontend
-cd client
+# Terminal 2 — Frontend (http://localhost:5173)
+cd frontend/StudySync
 npm run dev
 ```
 
-Open the local URL shown by Vite in your browser.
+Open **`http://localhost:5173`** in your browser.
+
+---
 
 ## 🏗️ Architecture
 
 ```mermaid
 flowchart TD
-    A[React + Vite] -->|Axios + JWT| B[Express API]
-    B --> C[JWT Authentication / Validation]
-    B --> D[(MongoDB)]
-    B --> E[Multer: PDF Upload]
-    E --> F[pdf-parse: Text Extraction]
-    F --> G[500-word Chunks]
-    G --> H[Keyword Retrieval]
-    H --> I[Gemini AI]
+    A["React 19 + Vite (frontend/StudySync)"] -->|Axios + JWT Bearer| B["Express 5 API (backend)"]
+    B --> C["JWT Protect Middleware"]
+    B --> D[("MongoDB (Mongoose 9)")]
+    B --> E["Multer (backend/uploads/documents)"]
+    E --> F["pdf-parse (Text Extraction)"]
+    F --> G["Text Chunker (500-word / 50-word overlap)"]
+    G --> H["Keyword Retrieval Algorithm"]
+    H --> I["Google Gemini (gemini-2.5-flash-lite)"]
     I --> B
 ```
 
-## 🔒 Production Notes
-
-- Configure production environment variables through your hosting provider.
-- Set CORS to allow only your frontend domain and serve the application over HTTPS.
-- Keep Gemini and JWT secrets on the backend; never commit `.env` files.
-- Enforce PDF type and size limits on the server and check document ownership on every protected request.
-- Local uploads may be lost on hosts with ephemeral filesystems. Use persistent storage or object storage for production deployments.
-- Validate AI-generated quiz and flashcard data before saving or displaying it.
-
-## 🤝 Contributing
-
-1. Fork the repository.
-2. Create a branch for your change.
-3. Implement and test your changes.
-4. Open a pull request with a clear description.
+---
 
 ## 📄 License
 
-Add the license selected by the project owner before publishing. No license was specified in the project details.
+This project is licensed under the [ISC License](LICENSE).
 
 ---
 
