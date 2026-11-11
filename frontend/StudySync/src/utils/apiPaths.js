@@ -1,11 +1,14 @@
-// This file is to keep every backend api at one place 
 
-export const BASE_URL = "http://localhost:8000"; // this is good practice as your base BE url changes then u have to change it at one place only
+// Keep every backend API endpoint in one place.
+
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export const API_PATHS = {
   AUTH: {
     REGISTER: "/api/auth/register",
-    LOGIN: "/api/auth/login",    GET_PROFILE: "/api/auth/profile",
+    LOGIN: "/api/auth/login",
+    GET_PROFILE: "/api/auth/profile",
     UPDATE_PROFILE: "/api/auth/profile",
     CHANGE_PASSWORD: "/api/auth/change-password",
   },
