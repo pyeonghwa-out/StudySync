@@ -47,7 +47,6 @@ const AIActions = () => {
       setModalTitle(`Explanation of "${concept}"`);
       setModalContent(explanation);
       setIsModalOpen(true);
-      setConcept("");
     } catch (error) {
       toast.error("Failed to explain concept.");
     } finally {
@@ -141,14 +140,14 @@ const AIActions = () => {
                   value={concept}
                   onChange={(e) => setConcept(e.target.value)}
                   placeholder="e.g., 'React Hooks'"
-                  className="flex-1 h-11 px-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-lg focus:shadow-purple-500/10"
+                  className="flex-1 h-11 px-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-lg focus:shadow-emerald-500/10"
                   disabled={loadingAction === "explain"}
                 />
 
                 <button
                   type="submit"
-                  disabled={loadingAction === "explain" || !concept.trim()}
-                  className="shrink-0 h-11 px-5 bg-linear-to-r from-emerald-600 to-emerald-500 hover:from-emerald-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                  disabled={loadingAction === "explain"}
+                  className="shrink-0 h-11 px-5 bg-linear-to-r from-emerald-600 to-emerald-500 hover:from-emerald-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
                 >
                   {loadingAction === "explain" ? (
                     <span className="flex items-center gap-2">
