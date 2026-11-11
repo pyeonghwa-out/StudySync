@@ -3,12 +3,13 @@ import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-if (!process.env.GEMINI_API_KEY) {
-  console.error('FATAL ERROR: GEMINI_API_KEY is not set in the environment variables.');
-  process.exit(1);
-}
+const getAiClient = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY is not set in environment variables');
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 /**
  * Generate flashcards from text
@@ -29,6 +30,7 @@ Text:
 ${text.substring(0, 15000)}`;
 
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
@@ -93,6 +95,7 @@ Text:
 ${text.substring(0, 15000)}`;
 
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
@@ -161,6 +164,7 @@ Text:
 ${text.substring(0, 20000)}`;
 
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
@@ -196,6 +200,7 @@ Question: ${question}
 Answer:`;
 
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
@@ -224,6 +229,7 @@ Context:
 ${context.substring(0, 10000)}`;
 
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
