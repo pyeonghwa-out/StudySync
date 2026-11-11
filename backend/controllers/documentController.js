@@ -4,7 +4,12 @@ import Quiz from '../models/Quiz.js';
 import { extractTextFromPDF } from '../utils/pdfParser.js';
 import { chunkText } from '../utils/textChunker.js';
 import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // @desc    Upload PDF document
 // @route   POST /api/documents/upload
@@ -32,29 +37,34 @@ export const uploadDocument = async (req, res, next) => {
       });
     }
 
-    // Construct the URL for the uploaded file
-    const baseUrl = `http://localhost:${process.env.PORT || 8000}`;
-    const fileUrl = `${baseUrl}/uploads/documents/${req.file.filename}`;
+    // Store relative path in database so it is portable across localhost and deployed domains
+    const relativeFilePath = `/uploads/documents/${req.file.filename}`;
 
     // Create document record
     const document = await Document.create({
       userId: req.user._id,
       title,
       fileName: req.file.originalname,
-      filePath: fileUrl, // Store the URL instead of the local path
+      filePath: relativeFilePath,
       fileSize: req.file.size,
       status: 'processing'
     });
 
-    // Process PDF in background (in production, use a queue like Bull)
-    processPDF(document._id, req.file.path).catch(err => {
-      console.error('PDF processing error:', err);
-    });
+    // Process PDF directly so document is ready immediately when upload returns
+    try {
+      await processPDF(document._id, req.file.path);
+      document.status = 'ready';
+    } catch (processErr) {
+      console.error('PDF processing error:', processErr);
+      document.status = 'failed';
+    }
 
     res.status(201).json({
       success: true,
       data: document,
-      message: 'Document uploaded successfully. Processing in progress...'
+      message: document.status === 'ready' 
+        ? 'Document uploaded and processed successfully' 
+        : 'Document uploaded, but text extraction failed'
     });
 
   } catch (error) {
@@ -76,19 +86,25 @@ const processPDF = async (documentId, filePath) => {
     const chunks = chunkText(text, 500, 50);
 
     // Update document
-    await Document.findByIdAndUpdate(documentId, {
-      extractedText: text,
-      chunks: chunks,
-      status: 'ready'
-    });
+    const updated = await Document.findByIdAndUpdate(
+      documentId,
+      {
+        extractedText: text,
+        chunks: chunks,
+        status: 'ready'
+      },
+      { new: true }
+    );
 
     console.log(`Document ${documentId} processed successfully`);
+    return updated;
   } catch (error) {
     console.error(`Error processing document ${documentId}:`, error);
 
     await Document.findByIdAndUpdate(documentId, {
       status: 'failed'
     });
+    throw error;
   }
 };
 
@@ -218,7 +234,9 @@ export const deleteDocument = async (req, res, next) => {
     }
 
     // Delete file from filesystem
-    await fs.unlink(document.filePath).catch(() => {});
+    const filename = path.basename(document.filePath);
+    const localFilePath = path.join(__dirname, '../uploads/documents', filename);
+    await fs.unlink(localFilePath).catch(() => {});
 
     // Delete document
     await document.deleteOne();
