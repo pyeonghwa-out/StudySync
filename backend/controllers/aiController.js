@@ -22,15 +22,24 @@ export const generateFlashcards = async (req, res, next) => {
 
     const document = await Document.findOne({
       _id: documentId,
-      userId: req.user._id,
-      status: 'ready'
+      userId: req.user._id
     });
 
     if (!document) {
       return res.status(404).json({
         success: false,
-        error: 'Document not found or not ready',
+        error: 'Document not found',
         statusCode: 404
+      });
+    }
+
+    if (!document.extractedText || document.extractedText.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: document.status === 'processing'
+          ? 'Document is still processing. Please wait a moment and try again.'
+          : 'Document text could not be extracted from this PDF. Please try re-uploading.',
+        statusCode: 400
       });
     }
 
@@ -80,15 +89,24 @@ export const generateQuiz = async (req, res, next) => {
 
     const document = await Document.findOne({
       _id: documentId,
-      userId: req.user._id,
-      status: 'ready'
+      userId: req.user._id
     });
 
     if (!document) {
       return res.status(404).json({
         success: false,
-        error: 'Document not found or not ready',
+        error: 'Document not found',
         statusCode: 404
+      });
+    }
+
+    if (!document.extractedText || document.extractedText.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: document.status === 'processing'
+          ? 'Document is still processing. Please wait a moment and try again.'
+          : 'Document text could not be extracted from this PDF. Please try re-uploading.',
+        statusCode: 400
       });
     }
 
@@ -136,15 +154,24 @@ export const generateSummary = async (req, res, next) => {
 
     const document = await Document.findOne({
       _id: documentId,
-      userId: req.user._id,
-      status: 'ready'
+      userId: req.user._id
     });
 
     if (!document) {
       return res.status(404).json({
         success: false,
-        error: 'Document not found or not ready',
+        error: 'Document not found',
         statusCode: 404
+      });
+    }
+
+    if (!document.extractedText || document.extractedText.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: document.status === 'processing'
+          ? 'Document is still processing. Please wait a moment and try again.'
+          : 'Document text could not be extracted from this PDF. Please try re-uploading.',
+        statusCode: 400
       });
     }
 
@@ -184,15 +211,24 @@ export const chat = async (req, res, next) => {
 
     const document = await Document.findOne({
       _id: documentId,
-      userId: req.user._id,
-      status: 'ready'
+      userId: req.user._id
     });
 
     if (!document) {
       return res.status(404).json({
         success: false,
-        error: 'Document not found or not ready',
+        error: 'Document not found',
         statusCode: 404
+      });
+    }
+
+    if (!document.extractedText || document.extractedText.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: document.status === 'processing'
+          ? 'Document is still processing. Please wait a moment and try again.'
+          : 'Document text could not be extracted from this PDF. Please try re-uploading.',
+        statusCode: 400
       });
     }
 
@@ -270,15 +306,24 @@ export const explainConcept = async (req, res, next) => {
 
     const document = await Document.findOne({
       _id: documentId,
-      userId: req.user._id,
-      status: 'ready'
+      userId: req.user._id
     });
 
     if (!document) {
       return res.status(404).json({
         success: false,
-        error: 'Document not found or not ready',
+        error: 'Document not found',
         statusCode: 404
+      });
+    }
+
+    if (!document.extractedText || document.extractedText.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: document.status === 'processing'
+          ? 'Document is still processing. Please wait a moment and try again.'
+          : 'Document text could not be extracted from this PDF. Please try re-uploading.',
+        statusCode: 400
       });
     }
 
